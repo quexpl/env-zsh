@@ -4,7 +4,11 @@ autoload -U add-zsh-hook
 load-local-conf() {
      # check file exists, is regular file and is readable:
      if [[ -f .env && -r .env ]]; then
-       source .env
+       if grep -q "export" ".env"; then
+           source "./.env"
+        else
+          export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
+        fi
      fi
 }
 add-zsh-hook chpwd load-local-conf
